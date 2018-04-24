@@ -5,12 +5,12 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: apache/nifi
+  tag: 1.6.0
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
 
 ingress:
