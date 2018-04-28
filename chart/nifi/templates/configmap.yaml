@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nifi.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  nifi.properties: |-
+{{ (.Files.Glob "config/nifi.properties").AsConfig | indent 2 }}
+
+login-identity-providers.xml: |-
+{{ (.Files.Glob "config/login-identity-providers.xml").AsConfig | indent 2 }}    
