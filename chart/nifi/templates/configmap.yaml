@@ -8,5 +8,24 @@ data:
   nifi.properties: |-
 {{ (.Files.Glob "config/nifi.properties").AsConfig | indent 2 }}
 
-login-identity-providers.xml: |-
-{{ (.Files.Glob "config/login-identity-providers.xml").AsConfig | indent 2 }}    
+  login-identity-providers.xml: |-
+{{ (.Files.Glob "config/login-identity-providers.xml").AsConfig | indent 2 }}
+
+  authorizers.xml: |-
+{{ (.Files.Glob "config/authorizers.xml").AsConfig | indent 2 }}
+
+  bootstrap-notification-services.xml: |-
+{{ (.Files.Glob "config/bootstrap-notification-services.xml").AsConfig | indent 2 }}
+
+  bootstrap.conf: |-
+{{ (.Files.Glob "config/bootstrap.conf").AsConfig | indent 2 }}
+
+  logback.xml: |- 
+{{ (.Files.Glob "config/logback.xml").AsConfig | indent 2 }}
+
+  state-management.xml: |-
+{{ (.Files.Glob "config/state-management.xml").AsConfig | indent 2 }}
+  
+  zookeeper.properties: |-
+{{ (.Files.Glob "config/zookeeper.properties").AsConfig | indent 2 }}
+  

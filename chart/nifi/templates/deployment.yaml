@@ -27,6 +27,10 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          volumeMounts:
+          - mountPath: /opt/nifi/nifi-{{ .Values.image.tag }}/conf/
+            name: nifi-config
+
           livenessProbe:
             httpGet:
               path: /
@@ -41,6 +45,25 @@ spec:
             periodSeconds: 5
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+      initContainers:
+      - name: init-config
+        image: busybox
+        command:
+        - cp
+        - "-RL"
+        - /configmap/.
+        - /configdir
+        volumeMounts:
+        - name: nifi-config
+          mountPath: /configdir
+        - name: {{ template "nifi.fullname" . }}
+          mountPath: /configmap
+      volumes:
+        - name: nifi-config
+          emptyDir: {}
+        - name: {{ template "nifi.fullname" . }}
+          configMap:
+            name: {{ template "nifi.fullname" . }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
