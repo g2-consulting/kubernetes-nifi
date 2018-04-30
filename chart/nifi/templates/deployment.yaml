@@ -30,6 +30,8 @@ spec:
           volumeMounts:
           - mountPath: /opt/nifi/nifi-{{ .Values.image.tag }}/conf/
             name: nifi-config
+          - mountPath: /nifitls
+            name: nifi-tls  
 
           livenessProbe:
             httpGet:
@@ -46,6 +48,22 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
       initContainers:
+{{- if .Values.nifi.secured }} 
+      - name: init-tls
+        image: "{{ .Values.toolkit.repository }}:{{ .Values.toolkit.tag }}"
+        imagePullPolicy: {{ .Values.toolkit.pullPolicy }}
+        command:
+        - "sh"
+        - "-c"
+        - |
+          $NIFI_TOOLKIT_HOME/bin/tls-toolkit.sh standalone -n 'localhost'
+          cp $NIFI_TOOLKIT_HOME/nifi-cert.pem /tlsoutput
+          cp $NIFI_TOOLKIT_HOME/nifi-key.key /tlsoutput
+          cp -r $NIFI_TOOLKIT_HOME /tlsoutput
+        volumeMounts:
+        - name: nifi-tls
+          mountPath: /tlsoutput
+{{- end }}          
       - name: init-config
         image: busybox
         command:
@@ -59,6 +77,8 @@ spec:
         - name: {{ template "nifi.fullname" . }}
           mountPath: /configmap
       volumes:
+        - name: nifi-tls
+          emptyDir: {}
         - name: nifi-config
           emptyDir: {}
         - name: {{ template "nifi.fullname" . }}
